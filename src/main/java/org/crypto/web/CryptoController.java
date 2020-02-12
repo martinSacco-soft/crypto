@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,10 +26,10 @@ public class CryptoController {
 	}
 	
 	@GetMapping("/currencies")
-	public ResponseEntity<BaseDto> getAllCryptoCurrencies () {
-		BaseDto<List<CurrencyDto>> baseDto = new BaseDto<>(true);
-		baseDto.setPayload(cryptoService.getAllCryptoCurrencies());
-		return new ResponseEntity(baseDto, HttpStatus.OK);
+	public ResponseEntity<BaseDto> getAllCryptoCurrencies () throws IOException {
+			BaseDto<List<CurrencyDto>> baseDto = new BaseDto<>(true);
+			baseDto.setPayload(cryptoService.getAllCryptoCurrencies());
+			return new ResponseEntity(baseDto, HttpStatus.OK);
 	}
 	
 	public ResponseEntity<BaseDto> createWallet () {
@@ -47,7 +48,7 @@ public class CryptoController {
 	
 	public void updateWallet() {
 		BaseDto<WalletDto> baseDto = new BaseDto<>(true);
-		WalletDto wallet = cryptoService.updateWallet();
+		
 	}
 	
 	public void removeWallet() {
