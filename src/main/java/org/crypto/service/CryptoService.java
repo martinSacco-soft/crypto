@@ -1,13 +1,15 @@
 package org.crypto.service;
 
 import org.crypto.model.*;
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface CryptoService {
 	
-	List<CurrencyDto> getAllCryptoCurrencies () throws IOException;
+	Map<String, CurrencyDto> getAllCryptoCurrencies ();
 	
 	WalletCreatedDto createWallet ();
 	

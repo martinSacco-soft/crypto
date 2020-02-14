@@ -13,6 +13,6 @@ public class CurrencyDto {
 	
 	private Long id;
 	private String symbol;
-	private String partnerSymbol;
-	private Long dataAvailableFrom;
+	private String partner_symbol;
+	private Long data_available_from;
 }

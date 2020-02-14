@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/crypto")
@@ -27,14 +29,20 @@ public class CryptoController {
 	
 	@GetMapping("/currencies")
 	public ResponseEntity<BaseDto> getAllCryptoCurrencies () throws IOException {
-			BaseDto<List<CurrencyDto>> baseDto = new BaseDto<>(true);
-			baseDto.setPayload(cryptoService.getAllCryptoCurrencies());
+			BaseDto<Map<String, CurrencyDto>> baseDto = new BaseDto<>(true);
+			Map<String, CurrencyDto> currencies = cryptoService.getAllCryptoCurrencies();
+			baseDto.setPayload(currencies);
 			return new ResponseEntity(baseDto, HttpStatus.OK);
 	}
 	
+	@PostMapping("/createwallet")
 	public ResponseEntity<BaseDto> createWallet () {
 		BaseDto<WalletCreatedDto> baseDto = new BaseDto<>(true);
 		WalletCreatedDto wallet = cryptoService.createWallet();
+		if (wallet.getId().compareTo(0L) == 0) {
+			baseDto.addMessage("Error creating wallet");
+			return new ResponseEntity<>(baseDto, HttpStatus.OK);
+		}
 		baseDto.setPayload(wallet);
 		return new ResponseEntity(baseDto, HttpStatus.OK);
 	}

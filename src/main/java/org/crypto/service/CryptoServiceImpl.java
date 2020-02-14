@@ -1,29 +1,22 @@
 package org.crypto.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.crypto.model.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 @Service
 public class CryptoServiceImpl implements CryptoService {
@@ -40,19 +33,56 @@ public class CryptoServiceImpl implements CryptoService {
 		this.restTemplate = builder.build();
 	}
 	
-	public List<CurrencyDto> getAllCryptoCurrencies() {
-
-
-		String currencyDtos = restTemplate.exchange("https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,JPY,EUR",
+	public Map<String, CurrencyDto> getAllCryptoCurrencies() {
+		
+		String currencies = restTemplate.exchange("https://min-api.cryptocompare.com/data/blockchain/list?extraParams=crypto&api_key=" + API_KEY,
 				HttpMethod.GET, null, new ParameterizedTypeReference<String>() {
 				}).getBody();
-
-		return null;
+		Map<String, CurrencyDto> map = new HashMap<>();
+		
+		try {
+			JSONObject jsonObject = new JSONObject(currencies);
+			JSONObject data = jsonObject.getJSONObject("Data");
+			ObjectMapper mapper = new ObjectMapper();
+			if(currencies != null) {
+				map = mapper.readValue(data.toString(), new TypeReference<Map<String, CurrencyDto>>(){});
+			}
+		} catch (JSONException | JsonProcessingException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		return map;
 	}
 	
 	public WalletCreatedDto createWallet () {
 		WalletCreatedDto wallet = new WalletCreatedDto();
-	
+		String wallets = restTemplate.exchange("https://min-api.cryptocompare.com/data/wallets/general?extraParams=crypto&api_key=" + API_KEY,
+				HttpMethod.GET, null, new ParameterizedTypeReference<String>() {
+				}).getBody();
+		Map<String, CurrencyDto> map = new HashMap<>();
+		try {
+			JSONObject jsonObject = new JSONObject(wallets);
+			JSONObject data = jsonObject.getJSONObject("Data");
+			ObjectMapper mapper = new ObjectMapper();
+			Long newId = 0L;
+			if(wallets != null) {
+				WalletDto walletDto;
+				map = mapper.readValue(data.toString(), new TypeReference<Map<String, CurrencyDto>>() {});
+				Iterator iterator = map.entrySet().iterator();
+				while (iterator.hasNext()) {
+					Map.Entry pair = (Map.Entry) iterator.next();
+					walletDto = (WalletDto) pair.getValue();
+					if (walletDto.getId().compareTo(newId) > 0) {
+						newId = walletDto.getId();
+					}
+				}
+			}
+			if (newId.compareTo(0L) != 0) {
+				wallet.setId(newId);
+			}
+		} catch (JSONException | JsonProcessingException e) {
+			System.out.println(e.getMessage());
+		}
 		return wallet;
 	}
 	
