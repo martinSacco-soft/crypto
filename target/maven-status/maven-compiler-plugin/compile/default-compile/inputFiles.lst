@@ -1,7 +1,3 @@
-C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\entity\Gambling.java
-C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\entity\DisplayTotalVolume24H.java
-C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\entity\GradePointsSplit.java
-C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\entity\MiningCompany.java
 C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\model\TransferDto.java
 C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\service\CryptoServiceImpl.java
 C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\web\DefaultExceptionHandler.java
@@ -14,9 +10,7 @@ C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\model\BoughtC
 C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\CryptoServiceApplication.java
 C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\model\WalletDto.java
 C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\entity\AttachedCard.java
-C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\entity\Exchange.java
 C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\model\WalletCreatedDto.java
 C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\model\BaseDto.java
 C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\service\CryptoService.java
 C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\model\CurrencyDto.java
-C:\Users\Martin Sacco\IdeaProjects\crypto\src\main\java\org\crypto\entity\TotalVolume24H.java

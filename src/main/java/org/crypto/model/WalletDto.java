@@ -1,5 +1,6 @@
 package org.crypto.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,8 +27,11 @@ public class WalletDto {
 	private AttachedCard attachedCard;
 	private Boolean hasTradingFacilities;
 	private Boolean hasVouchersAndOffers;
+	@JsonIgnore
 	private List<String> walletFeatures;
+	@JsonIgnore
 	private List<String> coins;
+	@JsonIgnore
 	private List<String> platforms;
 	private String sourceCodeUrl;
 	private String validationType;
@@ -36,7 +40,9 @@ public class WalletDto {
 	private Boolean recommended;
 	private Boolean sponsored;
 	private Integer moreCoins;
+	@JsonIgnore
 	private List<String> coinsToDisplay;
+	@JsonIgnore
 	private Rating rating;
 	private Integer sortOrder;
 }

@@ -8,4 +8,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class AttachedCard {
+	
+	private Long id;
+	private String name;
+	private String logoUrl;
+	private String url;
 }

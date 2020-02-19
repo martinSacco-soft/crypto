@@ -1,5 +1,6 @@
 package org.crypto.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.crypto.model.*;
 import org.json.JSONException;
 
@@ -11,9 +12,9 @@ public interface CryptoService {
 	
 	Map<String, CurrencyDto> getAllCryptoCurrencies ();
 	
-	WalletCreatedDto createWallet ();
+	WalletCreatedDto createWallet () throws JSONException, JsonProcessingException;
 	
-	WalletDto getWallet ();
+	WalletDto getWallet (Long id) throws JSONException, JsonProcessingException;
 	
 	void updateWallet();
 	
