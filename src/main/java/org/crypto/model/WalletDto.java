@@ -43,4 +43,6 @@ public class WalletDto {
 	@JsonIgnore
 	private Rating rating;
 	private Integer sortOrder;
+	private Long currency;
+	private Double amount;
 }

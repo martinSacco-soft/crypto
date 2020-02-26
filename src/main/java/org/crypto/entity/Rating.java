@@ -4,8 +4,8 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 
-@Data
-@Entity
+//@Data
+//@Entity
 public class Rating {
 	private Integer one;
 	private Integer two;

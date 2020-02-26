@@ -1,6 +1,7 @@
 package org.crypto.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.crypto.entity.Wallet;
 import org.crypto.model.*;
 import org.crypto.service.CryptoService;
 import org.json.JSONException;
@@ -41,7 +42,7 @@ public class CryptoController {
 		WalletDto wallet;
 		try {
 			wallet = cryptoService.createWallet(walletDto);
-		} catch (JSONException | JsonProcessingException e) {
+		} catch (JSONException e) {
 			baseDto.addMessage(e.getMessage());
 			return new ResponseEntity<>(baseDto, HttpStatus.OK);
 		}
@@ -60,7 +61,7 @@ public class CryptoController {
 		WalletDto wallet;
 		try {
 			wallet = cryptoService.getWallet(id);
-		} catch (JSONException | JsonProcessingException e) {
+		} catch (JSONException e) {
 			baseDto.addMessage(e.getMessage());
 			return new ResponseEntity<>(baseDto, HttpStatus.OK);
 		}
@@ -68,9 +69,18 @@ public class CryptoController {
 		return new ResponseEntity(baseDto, HttpStatus.OK);
 	}
 	
-	public void updateWallet(HttpServletRequest request) {
+	@PutMapping("wallets")
+	public ResponseEntity<BaseDto> updateWallet(@RequestBody WalletDto walletDto, HttpServletRequest request) {
 		BaseDto<WalletDto> baseDto = new BaseDto<>(true);
-		
+		WalletDto wallet;
+		try {
+			wallet = cryptoService.updateWallet(walletDto);
+		} catch (JSONException e) {
+			baseDto.addMessage(e.getMessage());
+			return new ResponseEntity<>(baseDto, HttpStatus.OK);
+		}
+		baseDto.setPayload(wallet);
+		return new ResponseEntity<>(baseDto, HttpStatus.OK);
 	}
 	
 	public void removeWallet(HttpServletRequest request) {

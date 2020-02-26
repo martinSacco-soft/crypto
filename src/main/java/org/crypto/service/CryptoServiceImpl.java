@@ -3,6 +3,7 @@ package org.crypto.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.crypto.entity.Wallet;
 import org.crypto.model.*;
 import org.crypto.repository.WalletRepository;
 import org.json.JSONException;
@@ -13,7 +14,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -59,37 +59,21 @@ public class CryptoServiceImpl implements CryptoService {
 		return map;
 	}
 	
-	public WalletDto createWallet (WalletDto walletDto) throws JSONException, JsonProcessingException {
-		return walletRepository.save(walletDto);
+	public WalletDto createWallet (WalletDto walletDto) throws JSONException {
+		Wallet wallet = mapWallet(walletDto);
+		walletRepository.save(wallet);
+		walletDto.setId(wallet.getId());
+		return walletDto;
 	}
 	
-	public WalletDto getWallet (Long id) throws JSONException, JsonProcessingException {
-		WalletDto wallet = new WalletDto();
-		String wallets = restTemplate.exchange("https://min-api.cryptocompare.com/data/wallets/general?extraParams=crypto&api_key=" + API_KEY,
-				HttpMethod.GET, null, new ParameterizedTypeReference<String>() {
-				}).getBody();
-		Map<String, WalletDto> map = new HashMap<>();
-		JSONObject jsonObject = new JSONObject(wallets);
-		JSONObject data = jsonObject.getJSONObject("Data");
-		ObjectMapper mapper = new ObjectMapper();
-		if(wallets != null) {
-			WalletDto walletDto;
-			map = mapper.readValue(data.toString(), new TypeReference<Map<String, WalletDto>>() {});
-			Iterator iterator = map.entrySet().iterator();
-			while (iterator.hasNext()) {
-				Map.Entry pair = (Map.Entry) iterator.next();
-				walletDto = (WalletDto) pair.getValue();
-				if (id.compareTo(walletDto.getId()) > 0) {
-					wallet = walletDto;
-				}
-			}
-		}
-		
-		return wallet;
+	public WalletDto getWallet (Long id) throws JSONException {
+		WalletDto walletDto = mapWalletDto(walletRepository.getOne(id));
+		return walletDto;
 	}
 	
-	public void updateWallet() {
-	
+	public WalletDto updateWallet(WalletDto walletDto) throws JSONException {
+		walletDto = mapWalletDto(walletRepository.save(mapWallet(walletDto)));
+		return walletDto;
 	}
 	
 	public void removeWallet() {
@@ -108,36 +92,55 @@ public class CryptoServiceImpl implements CryptoService {
 		return transferDto;
 	}
 	
-	private WalletDto mapWallet(Map.Entry pair) throws JSONException {
+	private WalletDto mapWalletDto(Wallet wallet) throws JSONException {
 		WalletDto walletDto = new WalletDto();
-		JSONObject jsonWallet = new JSONObject(pair.getValue().toString());
 		
-		walletDto.setId(jsonWallet.getLong("Id"));
-		walletDto.setUrl(jsonWallet.getString("Url"));
-		walletDto.setLogoUrl(jsonWallet.getString("LogoUrl"));
-		/*private String name;
-		private String security;
-		private String anonimity;
-		private String easeOfUse;
-		private Boolean hasAttachedCard;
-		private AttachedCard attachedCard;
-		private Boolean hasTradingFacilities;
-		private Boolean hasVouchersAndOffers;
-		private List<String> walletFeatures;
-		private List<String> coins;
-		@JsonIgnore
-		private List<String> platforms;
-		private String sourceCodeUrl;
-		private String validationType;
-		private Boolean isUsingOurApi;
-		private String affiliateUrl;
-		private Boolean recommended;
-		private Boolean sponsored;
-		private Integer moreCoins;
-		private List<String> coinsToDisplay;
-		private Rating rating;
-		private Integer sortOrder;*/
+		walletDto.setId(wallet.getId());
+		walletDto.setUrl(wallet.getUrl());
+		walletDto.setLogoUrl(wallet.getLogoUrl());
+		walletDto.setName(wallet.getName());
+		walletDto.setSecurity(wallet.getSecurity());
+		walletDto.setAnonimity(wallet.getAnonimity());
+		walletDto.setEaseOfUse(wallet.getEaseOfUse());
+		walletDto.setHasTradingFacilities(wallet.getHasTradingFacilities());
+		walletDto.setHasVouchersAndOffers(wallet.getHasVouchersAndOffers());
+		walletDto.setSourceCodeUrl(wallet.getSourceCodeUrl());
+		walletDto.setValidationType(wallet.getValidationType());
+		walletDto.setIsUsingOurApi(wallet.getIsUsingOurApi());
+		walletDto.setAffiliateUrl(wallet.getAffiliateUrl());
+		walletDto.setRecommended(wallet.getRecommended());
+		walletDto.setSponsored(wallet.getSponsored());
+		walletDto.setMoreCoins(wallet.getMoreCoins());
+		walletDto.setSortOrder(wallet.getSortOrder());
+		walletDto.setCurrency(wallet.getCurrency());
+		walletDto.setAmount(wallet.getAmount());
 		
 		return walletDto;
+	}
+	
+	private Wallet mapWallet(WalletDto walletDto) throws JSONException {
+		Wallet wallet = new Wallet();
+		
+		wallet.setId(walletDto.getId());
+		wallet.setUrl(walletDto.getUrl());
+		wallet.setLogoUrl(walletDto.getLogoUrl());
+		wallet.setName(walletDto.getName());
+		wallet.setSecurity(walletDto.getSecurity());
+		wallet.setAnonimity(walletDto.getAnonimity());
+		wallet.setEaseOfUse(walletDto.getEaseOfUse());
+		wallet.setHasTradingFacilities(walletDto.getHasTradingFacilities());
+		wallet.setHasVouchersAndOffers(walletDto.getHasVouchersAndOffers());
+		wallet.setSourceCodeUrl(walletDto.getSourceCodeUrl());
+		wallet.setValidationType(walletDto.getValidationType());
+		wallet.setIsUsingOurApi(walletDto.getIsUsingOurApi());
+		wallet.setAffiliateUrl(walletDto.getAffiliateUrl());
+		wallet.setRecommended(walletDto.getRecommended());
+		wallet.setSponsored(walletDto.getSponsored());
+		wallet.setMoreCoins(walletDto.getMoreCoins());
+		wallet.setSortOrder(walletDto.getSortOrder());
+		wallet.setCurrency(walletDto.getCurrency());
+		wallet.setAmount(walletDto.getAmount());
+		
+		return wallet;
 	}
 }

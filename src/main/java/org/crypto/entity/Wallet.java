@@ -19,12 +19,12 @@ public class Wallet {
 	private String anonimity;
 	private String easeOfUse;
 	private Boolean hasAttachedCard;
-	private AttachedCard attachedCard;
+	//private AttachedCard attachedCard;
 	private Boolean hasTradingFacilities;
 	private Boolean hasVouchersAndOffers;
-	private List<String> walletFeatures;
-	private List<String> coins;
-	private List<String> platforms;
+	//private List<String> walletFeatures;
+	//private List<String> coins;
+	//private List<String> platforms;
 	private String sourceCodeUrl;
 	private String validationType;
 	private Boolean isUsingOurApi;
@@ -32,7 +32,9 @@ public class Wallet {
 	private Boolean recommended;
 	private Boolean sponsored;
 	private Integer moreCoins;
-	private List<String> coinsToDisplay;
-	private Rating rating;
+	//private List<String> coinsToDisplay;
+	//private Rating rating;
 	private Integer sortOrder;
+	private Long currency;
+	private Double amount;
 }
