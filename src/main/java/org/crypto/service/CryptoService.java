@@ -1,18 +1,20 @@
 package org.crypto.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.crypto.model.*;
+import org.crypto.model.BoughtCurrencyDto;
+import org.crypto.model.CurrencyDto;
+import org.crypto.model.TransferDto;
+import org.crypto.model.WalletDto;
 import org.json.JSONException;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public interface CryptoService {
 	
 	Map<String, CurrencyDto> getAllCryptoCurrencies ();
 	
-	WalletCreatedDto createWallet () throws JSONException, JsonProcessingException;
+	WalletDto createWallet (WalletDto walletDto) throws JSONException, JsonProcessingException;
 	
 	WalletDto getWallet (Long id) throws JSONException, JsonProcessingException;
 	

@@ -1,15 +1,16 @@
 package org.crypto.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
-@NoArgsConstructor
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Data
+@Entity
 public class AttachedCard {
 	
-	private Long id;
+	private @Id	@GeneratedValue Long id;
 	private String name;
 	private String logoUrl;
 	private String url;

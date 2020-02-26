@@ -1,17 +1,17 @@
 package org.crypto.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
+@Entity
 public class Wallet {
 	
-	private Long id;
+	private @Id @GeneratedValue	Long id;
 	private String url;
 	private String logoUrl;
 	private String name;

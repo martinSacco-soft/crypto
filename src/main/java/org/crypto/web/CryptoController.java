@@ -35,12 +35,12 @@ public class CryptoController {
 			return new ResponseEntity(baseDto, HttpStatus.OK);
 	}
 	
-	@PostMapping("/createwallet")
-	public ResponseEntity<BaseDto> createWallet (HttpServletRequest request) {
-		BaseDto<WalletCreatedDto> baseDto = new BaseDto<>(true);
-		WalletCreatedDto wallet;
+	@PostMapping("/wallets")
+	public ResponseEntity<BaseDto> createWallet (@RequestBody WalletDto walletDto, HttpServletRequest request) {
+		BaseDto<WalletDto> baseDto = new BaseDto<>(true);
+		WalletDto wallet;
 		try {
-			wallet = cryptoService.createWallet();
+			wallet = cryptoService.createWallet(walletDto);
 		} catch (JSONException | JsonProcessingException e) {
 			baseDto.addMessage(e.getMessage());
 			return new ResponseEntity<>(baseDto, HttpStatus.OK);
@@ -53,7 +53,7 @@ public class CryptoController {
 		return new ResponseEntity(baseDto, HttpStatus.OK);
 	}
 	
-	@GetMapping("wallet/{id}")
+	@GetMapping("wallets/{id}")
 	public ResponseEntity<BaseDto> getWallet (@PathVariable("id") long id,
 											  HttpServletRequest request) {
 		BaseDto<WalletDto> baseDto = new BaseDto<>(true);
