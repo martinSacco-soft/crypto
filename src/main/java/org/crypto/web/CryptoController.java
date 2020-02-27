@@ -16,7 +16,6 @@ import java.util.Map;
 @RequestMapping("/crypto")
 public class CryptoController {
 	
-	
 	private CryptoService cryptoService;
 	
 	@Autowired
