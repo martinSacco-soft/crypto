@@ -1,7 +1,5 @@
 package org.crypto.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.crypto.entity.Wallet;
 import org.crypto.model.*;
 import org.crypto.service.CryptoService;
 import org.json.JSONException;
@@ -12,8 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -83,21 +79,38 @@ public class CryptoController {
 		return new ResponseEntity<>(baseDto, HttpStatus.OK);
 	}
 	
-	public void removeWallet(HttpServletRequest request) {
-	
-	
+	@DeleteMapping("wallets")
+	public ResponseEntity<BaseDto> removeWallet(@RequestBody WalletDto walletDto, HttpServletRequest request) {
+		BaseDto<WalletDto> baseDto = new BaseDto<>(true);
+		WalletDto wallet;
+		try {
+			wallet = cryptoService.removeWallet(walletDto);
+		} catch (JSONException e) {
+			baseDto.addMessage(e.getMessage());
+			return new ResponseEntity<>(baseDto, HttpStatus.OK);
+		}
+		baseDto.setPayload(wallet);
+		return new ResponseEntity<>(baseDto, HttpStatus.OK);
 	}
 	
-	public ResponseEntity<BaseDto> buyCurrency(HttpServletRequest request) {
-		BaseDto<BoughtCurrencyDto> baseDto = new BaseDto<>(true);
-		BoughtCurrencyDto currency = cryptoService.buyCurrency();
+	@PutMapping("currencies")
+	public ResponseEntity<BaseDto> buyCurrency(@RequestBody BuyCurrencyDto buyCurrencyDto, HttpServletRequest request) {
+		BaseDto<BuyCurrencyDto> baseDto = new BaseDto<>(true);
+		BuyCurrencyDto currency = cryptoService.buyCurrency(buyCurrencyDto);
 		baseDto.setPayload(currency);
 		return new ResponseEntity(baseDto, HttpStatus.OK);
 	}
 	
-	public ResponseEntity<BaseDto> transferValues(HttpServletRequest request) {
+	@PostMapping("wallets/transfer")
+	public ResponseEntity<BaseDto> transfer(@RequestBody TransferDto transferDto, HttpServletRequest request) {
 		BaseDto<TransferDto> baseDto = new BaseDto<>(true);
-		TransferDto transfer = cryptoService.transferValues();
+		try {
+			transferDto = cryptoService.transferValues(transferDto);
+		} catch (JSONException e) {
+			baseDto.addMessage(e.getMessage());
+			return new ResponseEntity<>(baseDto, HttpStatus.OK);
+		}
+		baseDto.setPayload(transferDto);
 		return new ResponseEntity(baseDto, HttpStatus.OK);
 	}
 }

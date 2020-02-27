@@ -1,7 +1,6 @@
 package org.crypto.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.crypto.model.BoughtCurrencyDto;
+import org.crypto.model.BuyCurrencyDto;
 import org.crypto.model.CurrencyDto;
 import org.crypto.model.TransferDto;
 import org.crypto.model.WalletDto;
@@ -19,9 +18,9 @@ public interface CryptoService {
 	
 	WalletDto updateWallet(WalletDto walletDto) throws JSONException;
 	
-	void removeWallet();
+	WalletDto removeWallet(WalletDto walletDto) throws JSONException;
 	
-	BoughtCurrencyDto buyCurrency();
+	BuyCurrencyDto buyCurrency(BuyCurrencyDto buyCurrencyDto);
 	
-	TransferDto transferValues();
+	TransferDto transferValues(TransferDto transferDto) throws JSONException;
 }

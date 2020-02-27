@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.crypto.entity.Wallet;
+import org.crypto.exception.AmountException;
+import org.crypto.exception.WalletNotFoundException;
 import org.crypto.model.*;
 import org.crypto.repository.WalletRepository;
 import org.json.JSONException;
@@ -16,9 +18,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class CryptoServiceImpl implements CryptoService {
@@ -76,19 +80,61 @@ public class CryptoServiceImpl implements CryptoService {
 		return walletDto;
 	}
 	
-	public void removeWallet() {
-	
+	public WalletDto removeWallet(WalletDto walletDto) throws JSONException {
+		walletRepository.delete(mapWallet(walletDto));
+		return walletDto;
 	}
 	
-	public BoughtCurrencyDto buyCurrency() {
-		BoughtCurrencyDto boughtCurrencyDto = new BoughtCurrencyDto();
-		
-		return boughtCurrencyDto;
+	public BuyCurrencyDto buyCurrency(BuyCurrencyDto buyCurrencyDto) {
+		Optional<Wallet> walletOptional = walletRepository.findByName(buyCurrencyDto.getWalletName());
+		if(!walletOptional.isEmpty()) {
+			Wallet wallet = walletOptional.get();
+			String currency = buyCurrencyDto.getCurrency();
+			BigDecimal amountToBuy = buyCurrencyDto.getAmount();
+			if(wallet.getCurrencies().containsKey(currency)) {
+				BigDecimal newAmount = wallet.getCurrencies().get(currency).add(amountToBuy);
+				wallet.getCurrencies().put(currency, newAmount);
+				walletRepository.save(wallet);
+			} else {
+				wallet.getCurrencies().put(currency, amountToBuy);
+			}
+		} else {
+			throw new WalletNotFoundException("Wallet not found");
+		}
+		return buyCurrencyDto;
 	}
 	
-	public TransferDto transferValues() {
-		TransferDto transferDto = new TransferDto();
-		
+	public TransferDto transferValues(TransferDto transferDto) throws JSONException {
+		Optional<Wallet> walletFromOptional = walletRepository.findByName(transferDto.getWalletFrom());
+		Optional<Wallet> walletToOptional = walletRepository.findByName(transferDto.getWalletTo());
+		if(!(walletFromOptional.isEmpty() || walletToOptional.isEmpty())) {
+			String currencyFrom = transferDto.getCurrencyFrom();
+			String currencyTo = transferDto.getCurrencyTo();
+			String result = restTemplate.exchange("https://min-api.cryptocompare.com/data/price?extraParams=crypto" +
+							"&fsym=" + currencyFrom + "&tsyms=" + currencyTo + "&api_key=" + API_KEY,
+					HttpMethod.GET, null, new ParameterizedTypeReference<String>() {
+					}).getBody();
+			JSONObject jsonObject = new JSONObject(result);
+			BigDecimal rate = new BigDecimal(jsonObject.getDouble(currencyTo));
+			Wallet walletFrom = walletFromOptional.get();
+			Wallet walletTo = walletToOptional.get();
+			BigDecimal originalAmount = walletFrom.getCurrencies().get(currencyFrom);
+			if(originalAmount.compareTo(transferDto.getAmountFrom()) >= 0) {
+				walletFrom.getCurrencies().put(currencyFrom, originalAmount.subtract(transferDto.getAmountFrom()));
+				BigDecimal amountTo = transferDto.getAmountFrom().multiply(rate);
+				walletRepository.save(walletFrom);
+				if(walletTo.getCurrencies().containsKey(currencyTo)) {
+					amountTo = amountTo.add(walletTo.getCurrencies().get(currencyTo));
+				}
+				transferDto.setAmountTo(amountTo);
+				walletTo.getCurrencies().put(currencyTo, amountTo);
+				walletRepository.save(walletTo);
+			} else {
+				throw new AmountException("Origin wallet does not have enough funds");
+			}
+		} else {
+			throw new WalletNotFoundException("Wallet not found");
+		}
 		return transferDto;
 	}
 	
@@ -96,24 +142,8 @@ public class CryptoServiceImpl implements CryptoService {
 		WalletDto walletDto = new WalletDto();
 		
 		walletDto.setId(wallet.getId());
-		walletDto.setUrl(wallet.getUrl());
-		walletDto.setLogoUrl(wallet.getLogoUrl());
 		walletDto.setName(wallet.getName());
-		walletDto.setSecurity(wallet.getSecurity());
-		walletDto.setAnonimity(wallet.getAnonimity());
-		walletDto.setEaseOfUse(wallet.getEaseOfUse());
-		walletDto.setHasTradingFacilities(wallet.getHasTradingFacilities());
-		walletDto.setHasVouchersAndOffers(wallet.getHasVouchersAndOffers());
-		walletDto.setSourceCodeUrl(wallet.getSourceCodeUrl());
-		walletDto.setValidationType(wallet.getValidationType());
-		walletDto.setIsUsingOurApi(wallet.getIsUsingOurApi());
-		walletDto.setAffiliateUrl(wallet.getAffiliateUrl());
-		walletDto.setRecommended(wallet.getRecommended());
-		walletDto.setSponsored(wallet.getSponsored());
-		walletDto.setMoreCoins(wallet.getMoreCoins());
-		walletDto.setSortOrder(wallet.getSortOrder());
-		walletDto.setCurrency(wallet.getCurrency());
-		walletDto.setAmount(wallet.getAmount());
+		walletDto.setCurrencies(wallet.getCurrencies());
 		
 		return walletDto;
 	}
@@ -122,24 +152,8 @@ public class CryptoServiceImpl implements CryptoService {
 		Wallet wallet = new Wallet();
 		
 		wallet.setId(walletDto.getId());
-		wallet.setUrl(walletDto.getUrl());
-		wallet.setLogoUrl(walletDto.getLogoUrl());
 		wallet.setName(walletDto.getName());
-		wallet.setSecurity(walletDto.getSecurity());
-		wallet.setAnonimity(walletDto.getAnonimity());
-		wallet.setEaseOfUse(walletDto.getEaseOfUse());
-		wallet.setHasTradingFacilities(walletDto.getHasTradingFacilities());
-		wallet.setHasVouchersAndOffers(walletDto.getHasVouchersAndOffers());
-		wallet.setSourceCodeUrl(walletDto.getSourceCodeUrl());
-		wallet.setValidationType(walletDto.getValidationType());
-		wallet.setIsUsingOurApi(walletDto.getIsUsingOurApi());
-		wallet.setAffiliateUrl(walletDto.getAffiliateUrl());
-		wallet.setRecommended(walletDto.getRecommended());
-		wallet.setSponsored(walletDto.getSponsored());
-		wallet.setMoreCoins(walletDto.getMoreCoins());
-		wallet.setSortOrder(walletDto.getSortOrder());
-		wallet.setCurrency(walletDto.getCurrency());
-		wallet.setAmount(walletDto.getAmount());
+		wallet.setCurrencies(walletDto.getCurrencies());
 		
 		return wallet;
 	}
