@@ -116,7 +116,60 @@ public class CryptoControllerTest {
 		verify(cryptoService).getWallet(anyLong());
 	}
 	
+	@Test
+	public void updateWallet_Success() throws Exception {
+		WalletDto walletDto = createMockWallet();
+		walletDto.setName("Testing Wallet Updated");
+		
+		when(cryptoService.updateWallet(any())).thenReturn(walletDto);
+		
+		mockMvc.perform(MockMvcRequestBuilders
+				.put("/crypto/wallets")
+				.content("{\n" +
+						"\t\"name\": \"Testing Wallet Updated\",\n" +
+						"\t\"currencies\": {\n" +
+						"        \"BTC\": 5\n" +
+						"\t}\n" +
+						"}")
+				.characterEncoding("utf-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.success").value(true))
+				.andExpect(jsonPath("$.messages").value(Lists.newArrayList()))
+				.andExpect(jsonPath("$.payload.id").value(1L))
+				.andExpect(jsonPath("$.payload.name").value("Testing Wallet Updated"));
+		
+		verify(cryptoService).updateWallet(any());
+	}
 	
+	@Test
+	public void removeWallet_Success() throws Exception {
+		WalletDto walletDto = createMockWallet();
+		
+		when(cryptoService.removeWallet(any())).thenReturn(walletDto);
+		
+		mockMvc.perform(MockMvcRequestBuilders
+				.delete("/crypto/wallets")
+				.content("{\n" +
+						"\t\"name\": \"Testing Wallet\",\n" +
+						"\t\"currencies\": {\n" +
+						"        \"BTC\": 5\n" +
+						"\t}\n" +
+						"}")
+				.characterEncoding("utf-8")
+				.accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.success").value(true))
+				.andExpect(jsonPath("$.messages").value(Lists.newArrayList()))
+				.andExpect(jsonPath("$.payload.id").value(1L))
+				.andExpect(jsonPath("$.payload.name").value("Testing Wallet"));
+		
+		verify(cryptoService).removeWallet(any());
+	}
 	
 	private WalletDto createMockWallet() {
 		WalletDto walletDto = new WalletDto();
