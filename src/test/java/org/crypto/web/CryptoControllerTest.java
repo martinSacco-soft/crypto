@@ -1,6 +1,7 @@
 package org.crypto.web;
 
 import org.assertj.core.util.Lists;
+import org.crypto.entity.Wallet;
 import org.crypto.model.CurrencyDto;
 import org.crypto.model.WalletDto;
 import org.crypto.service.CryptoService;
@@ -50,12 +51,7 @@ public class CryptoControllerTest {
 	
 	@Test
 	public void createWallet_Success() throws Exception {
-		WalletDto walletDto = new WalletDto();
-		Map<String, BigDecimal> currencies = new HashMap<>();
-		walletDto.setName("Testing Wallet");
-		currencies.put("BTC", new BigDecimal(5));
-		walletDto.setCurrencies(currencies);
-		walletDto.setId(1L);
+		WalletDto walletDto = createMockWallet();
 		
 		when(cryptoService.createWallet(any())).thenReturn(walletDto);
 		
@@ -104,12 +100,7 @@ public class CryptoControllerTest {
 	
 	@Test
 	public void getWallet_Success() throws Exception {
-		WalletDto walletDto = new WalletDto();
-		Map<String, BigDecimal> currencies = new HashMap<>();
-		walletDto.setName("Testing Wallet");
-		currencies.put("BTC", new BigDecimal(5));
-		walletDto.setCurrencies(currencies);
-		walletDto.setId(1L);
+		WalletDto walletDto = createMockWallet();
 		
 		when(cryptoService.getWallet(anyLong())).thenReturn(walletDto);
 		
@@ -123,5 +114,18 @@ public class CryptoControllerTest {
 				.andExpect(jsonPath("$.payload.name").value("Testing Wallet"));
 		
 		verify(cryptoService).getWallet(anyLong());
+	}
+	
+	
+	
+	private WalletDto createMockWallet() {
+		WalletDto walletDto = new WalletDto();
+		Map<String, BigDecimal> currencies = new HashMap<>();
+		walletDto.setName("Testing Wallet");
+		currencies.put("BTC", new BigDecimal(5));
+		walletDto.setCurrencies(currencies);
+		walletDto.setId(1L);
+		
+		return walletDto;
 	}
 }
