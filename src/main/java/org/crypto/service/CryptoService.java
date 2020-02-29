@@ -20,7 +20,7 @@ public interface CryptoService {
 	
 	WalletDto removeWallet(WalletDto walletDto) throws JSONException;
 	
-	BuyCurrencyDto buyCurrency(BuyCurrencyDto buyCurrencyDto);
+	BuyCurrencyDto buyCurrency(BuyCurrencyDto buyCurrencyDto) throws JSONException;
 	
 	TransferDto transferValues(TransferDto transferDto) throws JSONException;
 }

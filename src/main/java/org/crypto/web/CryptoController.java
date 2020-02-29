@@ -4,6 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.crypto.exception.WalletNotFoundException;
 import org.crypto.model.*;
 import org.crypto.service.CryptoService;
 import org.json.JSONException;
@@ -72,6 +73,9 @@ public class CryptoController {
 		} catch (JSONException e) {
 			baseDto.addMessage(e.getMessage());
 			return new ResponseEntity<>(baseDto, HttpStatus.OK);
+		} catch (Exception e) {
+			baseDto.addMessage(e.getMessage());
+			return new ResponseEntity<>(baseDto, HttpStatus.NOT_FOUND);
 		}
 		baseDto.setPayload(wallet);
 		return new ResponseEntity(baseDto, HttpStatus.OK);
@@ -88,6 +92,9 @@ public class CryptoController {
 		} catch (JSONException e) {
 			baseDto.addMessage(e.getMessage());
 			return new ResponseEntity<>(baseDto, HttpStatus.OK);
+		} catch (Exception e) {
+			baseDto.addMessage(e.getMessage());
+			return new ResponseEntity<>(baseDto, HttpStatus.NOT_FOUND);
 		}
 		baseDto.setPayload(wallet);
 		return new ResponseEntity<>(baseDto, HttpStatus.OK);
@@ -104,6 +111,9 @@ public class CryptoController {
 		} catch (JSONException e) {
 			baseDto.addMessage(e.getMessage());
 			return new ResponseEntity<>(baseDto, HttpStatus.OK);
+		} catch (Exception e) {
+			baseDto.addMessage(e.getMessage());
+			return new ResponseEntity<>(baseDto, HttpStatus.NOT_FOUND);
 		}
 		baseDto.setPayload(wallet);
 		return new ResponseEntity<>(baseDto, HttpStatus.OK);
@@ -114,7 +124,16 @@ public class CryptoController {
 	@PutMapping("currencies")
 	public ResponseEntity<BaseDto> buyCurrency(@RequestBody BuyCurrencyDto buyCurrencyDto, HttpServletRequest request) {
 		BaseDto<BuyCurrencyDto> baseDto = new BaseDto<>(true);
-		BuyCurrencyDto currency = cryptoService.buyCurrency(buyCurrencyDto);
+		BuyCurrencyDto currency;
+		try {
+			currency = cryptoService.buyCurrency(buyCurrencyDto);
+		} catch (JSONException e) {
+			baseDto.addMessage(e.getMessage());
+			return new ResponseEntity<>(baseDto, HttpStatus.OK);
+		} catch (Exception e) {
+			baseDto.addMessage(e.getMessage());
+			return new ResponseEntity<>(baseDto, HttpStatus.NOT_FOUND);
+		}
 		baseDto.setPayload(currency);
 		return new ResponseEntity(baseDto, HttpStatus.OK);
 	}
@@ -129,6 +148,9 @@ public class CryptoController {
 		} catch (JSONException e) {
 			baseDto.addMessage(e.getMessage());
 			return new ResponseEntity<>(baseDto, HttpStatus.OK);
+		} catch (Exception e) {
+			baseDto.addMessage(e.getMessage());
+			return new ResponseEntity<>(baseDto, HttpStatus.NOT_FOUND);
 		}
 		baseDto.setPayload(transferDto);
 		return new ResponseEntity(baseDto, HttpStatus.OK);
