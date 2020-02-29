@@ -171,6 +171,7 @@ public class CryptoControllerTest {
 		verify(cryptoService).removeWallet(any());
 	}
 	
+	@Test
 	private void buyCurrency_Success() throws Exception {
 		BuyCurrencyDto buyCurrencyDto = createMockBuyCurrencyDto();
 		when(cryptoService.buyCurrency(any())).thenReturn(buyCurrencyDto);
@@ -178,10 +179,10 @@ public class CryptoControllerTest {
 		mockMvc.perform(MockMvcRequestBuilders
 				.put("/crypto/currencies")
 				.content("{\n" +
-				"\t\"walletName\": \"Testing Wallet\",\n" +
-				"\t\"currency\": \"BTC\",\n" +
-				"\t\"amount\": 5\n" +
-				"}")
+						"\t\"walletName\": \"Testing Wallet\",\n" +
+						"\t\"currency\": \"BTC\",\n" +
+						"\t\"amount\": 2.5\n" +
+						"}")
 				.characterEncoding("utf-8")
 				.accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON))
@@ -191,11 +192,12 @@ public class CryptoControllerTest {
 				.andExpect(jsonPath("$.messages").value(Lists.newArrayList()))
 				.andExpect(jsonPath("$.payload.walletName").value("Testing Wallet"))
 				.andExpect(jsonPath("$.payload.currency").value("BTC"))
-				.andExpect(jsonPath("$.payload.amount").value(5));
+				.andExpect(jsonPath("$.payload.amount").value(2.5));
 		
 		verify(cryptoService).buyCurrency(any());
 	}
 	
+	@Test
 	private void transfer_Success() throws Exception {
 		TransferDto transferDto = createMockTransferDto();
 		when(cryptoService.transferValues(any())).thenReturn(transferDto);
