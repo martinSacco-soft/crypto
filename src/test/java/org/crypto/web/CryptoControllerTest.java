@@ -172,7 +172,7 @@ public class CryptoControllerTest {
 	}
 	
 	@Test
-	private void buyCurrency_Success() throws Exception {
+	public void buyCurrency_Success() throws Exception {
 		BuyCurrencyDto buyCurrencyDto = createMockBuyCurrencyDto();
 		when(cryptoService.buyCurrency(any())).thenReturn(buyCurrencyDto);
 		
@@ -198,7 +198,7 @@ public class CryptoControllerTest {
 	}
 	
 	@Test
-	private void transfer_Success() throws Exception {
+	public void transfer_Success() throws Exception {
 		TransferDto transferDto = createMockTransferDto();
 		when(cryptoService.transferValues(any())).thenReturn(transferDto);
 		
